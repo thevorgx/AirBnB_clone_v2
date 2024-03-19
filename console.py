@@ -12,31 +12,6 @@ from models.amenity import Amenity
 from models.review import Review
 
 
-def vorg_console_command_dynamo(args_list):
-    key_value = {}
-    for args in args_list[1:]:
-        new_list = args.split("=")
-        key = new_list[0]
-        value = new_list[1]
-        if value.startswith('"') and value.endswith('"'):
-            value = value.replace('"', "")
-        if '_' in value:
-            value = value.replace("_", " ")
-        if "id" not in key:
-            if '.' in value:
-                try:
-                    value = float(value)
-                except ValueError:
-                    pass
-            else:
-                try:
-                    value = int(value)
-                except ValueError:
-                    pass
-        key_value[key] = value
-    return (key_value)
-
-
 class HBNBCommand(cmd.Cmd):
     """ Contains the functionality for the HBNB console"""
 
@@ -151,7 +126,28 @@ class HBNBCommand(cmd.Cmd):
             print("** class doesn't exist **")
             return
 
-        key_value = vorg_console_command_dynamo(tokenize_args)
+        key_value = {}
+        for args in tokenize_args[1:]:
+            new_list = args.split("=")
+            key = new_list[0]
+            value = new_list[1]
+            if value.startswith('"') and value.endswith('"'):
+                value = value.replace('"', "")
+            if '_' in value:
+                value = value.replace("_", " ")
+            if "id" not in key:
+                if '.' in value:
+                    try:
+                        value = float(value)
+                    except ValueError:
+                        value = value
+                else:
+                    try:
+                        value = int(value)
+                    except ValueError:
+                        value = value
+            key_value[key] = value
+
         if len(key_value) == 0:
             create_instance = eval(cls_name)()
         else:
