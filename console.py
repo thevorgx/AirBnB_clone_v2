@@ -155,7 +155,6 @@ class HBNBCommand(cmd.Cmd):
             create_instance = eval(cls_name)()
         else:
             create_instance = eval(cls_name)(**key_value)
-            storage.new(create_instance)
         storage.save()
         print(create_instance.id)
 
