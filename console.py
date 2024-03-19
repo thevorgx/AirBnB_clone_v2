@@ -27,12 +27,12 @@ def vorg_console_command_dynamo(args_list):
                 try:
                     value = float(value)
                 except ValueError:
-                    value = value
+                    pass
             else:
                 try:
                     value = int(value)
                 except ValueError:
-                    value = value
+                    pass
         key_value[key] = value
     return (key_value)
 
