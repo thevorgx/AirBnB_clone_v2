@@ -3,8 +3,8 @@
 sudo apt-get -y update
 sudo apt-get -y install nginx
 
-sudo mkdir -p /data/web_static/releases/test/index.html
-sudo mkdir -p /data/web_static/shared
+sudo mkdir -p /data/web_static/releases/test/
+sudo mkdir -p /data/web_static/shared/
 
 echo "Hello Vorg" | sudo tee /data/web_static/releases/test/index.html
 
