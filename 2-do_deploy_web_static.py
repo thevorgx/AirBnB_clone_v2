@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 """Distributes an archive to web servers using fabric"""
 
-from fabric.api import env, put, run
-from os import path
+from fabric.api import *
+from os.path import exists
 
 
 env.user = 'ubuntu'
@@ -10,23 +10,24 @@ env.hosts = ['18.206.198.128', '107.23.109.180']
 
 
 def do_deploy(archive_path):
-    """distributes an archive to web servers."""
-
-    if not path.exists(archive_path):
+    """ distributes an archive to my web servers
+    """
+    if exists(archive_path) is False:
         return False
 
-    put(archive_path, '/tmp')
+    filename = archive_path.split('/')[-1]
+    no_tgz = '/data/web_static/releases/' + "{}".format(filename.split('.')[0])
+    tmp = "/tmp/" + filename
 
-    filename = path.basename(archive_path)
-    filename_no_extension = filename.split('.')[0]
-
-    run(f"mkdir -p /data/web_static/releases/{filename_no_extension}")
-    run(f"tar -xzf /tmp/{filename} -C /data/web_static/releases/{filename_no_extension}/")
-
-    run(f"rm /tmp/{filename}")
-
-    run('rm -rf /data/web_static/current')
-
-    run(f"ln -s /data/web_static/releases/{filename_no_extension}/ /data/web_static/current")
-
-    return True
+    try:
+        put(archive_path, "/tmp/")
+        run("mkdir -p {}/".format(no_tgz))
+        run("tar -xzf {} -C {}/".format(tmp, no_tgz))
+        run("rm {}".format(tmp))
+        run("mv {}/web_static/* {}/".format(no_tgz, no_tgz))
+        run("rm -rf {}/web_static".format(no_tgz))
+        run("rm -rf /data/web_static/current")
+        run("ln -s {}/ /data/web_static/current".format(no_tgz))
+        return True
+    except Exception:
+        return False
